@@ -11,25 +11,25 @@
 @cell-bg-color: #fff;
 
 //overlay
-@overlay-selection-bg-color:  rgba(249,105,14,0.2);
+@overlay-selection-bg-color: rgba(249, 105, 14, 0.2);
 
 //dayCell
-@daycell-bg-color-hover: rgba(249,105,14,0.4);
+@daycell-bg-color-hover: rgba(249, 105, 14, 0.4);
 @daycell-border-color-hover: #f9690e;
 
 //event
 @event-color: @calendar-color;
-@event-bg-color: rgba(139,195,74, 0.4);
+@event-bg-color: rgba(139, 195, 74, 0.4);
 
 //modal variable
-@modal-backdrop: rgba(0,0,0,0.6);
+@modal-backdrop: rgba(0, 0, 0, 0.6);
 @modal-padding: 100px;
 @modal-border-color: #b7b7b7;
 @modal-content-padding: 10px;
 @modal-button-color: #fff;
-@modal-button-bg-color: rgba(249,105,14,0.8);
+@modal-button-bg-color: rgba(249, 105, 14, 0.8);
 @modal-button-border-color: @modal-button-bg-color;
-@modal-button-bg-color-hover: rgba(249,105,14,0.6);
+@modal-button-bg-color-hover: rgba(249, 105, 14, 0.6);
 
 .weekCalendar {
   position: relative;
@@ -39,6 +39,7 @@
   overflow: hidden;
   padding-left: @scale-width;
   padding-top: @header-height;
+  padding-bottom: 10px;
   color: @calendar-color;
   * {
     box-sizing: border-box;
@@ -73,7 +74,7 @@
   font-weight: bold;
 }
 
-.weekCalendar__headerWrapper{
+.weekCalendar__headerWrapper {
   height: 100%;
   border-top: 1px solid @border-color;
   border-bottom: 1px solid @border-color;
@@ -198,7 +199,7 @@
 .customModal__text {
   text-align: center;
   margin-bottom: 5px;
-  white-space:nowrap;
+  white-space: nowrap;
 }
 
 .customModal__input {
@@ -214,7 +215,8 @@
   margin-bottom: 5px;
   background-color: @modal-button-bg-color;
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     cursor: pointer;
     background-color: @modal-button-bg-color-hover;
   }
