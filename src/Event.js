@@ -9,9 +9,9 @@ const propTypes = {
 
 class Event extends React.PureComponent {
   render() {
-    const { start, end, value } = this.props;
+    const { start, end, value, color } = this.props;
     return (
-      <div className="event">
+      <div className="event" style={{ backgroundColor: color }}>
         <span>{`${start.format("HH:mm")} - ${end.format("HH:mm")}`}</span>
         <br />
         {value}

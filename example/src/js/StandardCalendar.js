@@ -3,8 +3,9 @@ import moment from "moment";
 import WeekCalendar from "react-week-calendar";
 import { schedule } from "./schedule";
 import course from "./courses";
-import { dayOfTheWeek } from "../../../src/Utils";
+import { dayOfTheWeekShort } from "../../../src/Utils";
 import { Modal, Table, Grid, Row, Button, Col } from "react-bootstrap";
+
 export default class StandardCalendar extends React.Component {
   constructor(props) {
     super(props);
@@ -24,15 +25,16 @@ export default class StandardCalendar extends React.Component {
       scheduleCombos: [],
       show: false,
       courseDisplay: null,
-      showOverlap: false
+      showOverlap: false,
+      addCourse: true
     };
   }
   handleClose() {
     this.setState({ show: false });
   }
 
-  handleShow(course) {
-    this.setState({ show: true, courseDisplay: course });
+  handleShow(course, bAdd) {
+    this.setState({ show: true, courseDisplay: course, addCourse: bAdd });
   }
   overlapClose() {
     this.setState({ showOverlap: false });
@@ -53,7 +55,8 @@ export default class StandardCalendar extends React.Component {
           h: course.endHour,
           m: course.endMinute
         }).add(course.days[i] - 1, "d"),
-        value: course.code
+        value: course.code,
+        color: course.color
       };
       arr.push(courseInfo);
       index++;
@@ -71,11 +74,62 @@ export default class StandardCalendar extends React.Component {
   }
   displayDays(daysArray) {
     return _.map(daysArray, day => {
-      return <p>{dayOfTheWeek(day - 1)}</p>;
+      return (
+        <p style={{ paddingRight: "5px" }}>{dayOfTheWeekShort(day - 1)}</p>
+      );
     });
   }
+  convertTo12(hour, minute) {
+    var notation = "am";
+    var displayHour = hour;
+    var displayMinute = minute;
+    if (hour > 12) {
+      displayHour = hour - 12;
+      notation = "pm";
+    } else if (hour == 0) {
+      displayHour = 12;
+    }
+    if (minute < 10) {
+      displayMinute = "0" + minute;
+    }
+    return `${displayHour}:${displayMinute} ${notation}`;
+  }
+  displayTime(course) {
+    return (
+      <p>
+        {this.convertTo12(course.startHour, course.startMinute)}-
+        {this.convertTo12(course.endHour, course.endMinute)}
+      </p>
+    );
+  }
+  displayCourseOptions(course) {
+    var numCells = 3;
+    if (course.length === 3) {
+      numCells = 2;
+    }
+    var courseOptions = _.map(course, option => {
+      return (
+        <Col xs={12} md={numCells}>
+          <div style={{ display: "flex" }}>{this.displayDays(option.days)}</div>
+          <div>{this.displayTime(option)}</div>
+          <div>{option.prof}</div>
+        </Col>
+      );
+    });
+    return (
+      <div>
+        <Grid>
+          <Row className="show-grid">
+            <h5>Available Times</h5>
+            {courseOptions}
+          </Row>
+        </Grid>
+      </div>
+    );
+  }
   renderCourseModal() {
-    const { courseDisplay, show } = this.state;
+    const { courseDisplay, show, addCourse } = this.state;
+    console.log(courseDisplay);
     return (
       <div>
         {courseDisplay && (
@@ -86,12 +140,18 @@ export default class StandardCalendar extends React.Component {
             <Modal.Body>
               <h4>{courseDisplay[0].code}</h4>
               <hr />
-              <div>{this.displayDays(courseDisplay[0].days)}</div>
+              <div>{this.displayCourseOptions(courseDisplay)}</div>
             </Modal.Body>
             <Modal.Footer>
-              <Button onClick={() => this.addCourse(courseDisplay)}>
-                Add Course
-              </Button>
+              {addCourse ? (
+                <Button onClick={() => this.addCourse(courseDisplay)}>
+                  Add Course
+                </Button>
+              ) : (
+                <Button onClick={() => this.removeCourse(courseDisplay)}>
+                  Remove Course
+                </Button>
+              )}
               <Button onClick={this.handleClose}>Close</Button>
             </Modal.Footer>
           </Modal>
@@ -160,6 +220,7 @@ export default class StandardCalendar extends React.Component {
       newIndex = 0;
     }
     this.setCourseList(tmpArr, combinationList, index);
+    console.log("tmpArr", tmpArr);
     this.setState({ selectedIntervals: tmpArr, scheduleIndex: newIndex });
   }
   selectCourses() {
@@ -207,17 +268,20 @@ export default class StandardCalendar extends React.Component {
   }
   showCoursesAvailable() {
     //console.log("show all:", course.allCourses);
+    //courses.allCourses.sort(compare);
     return _.map(course.allCourses, item => {
       return (
         <li>
-          <Button style={{ display: "flex" }}>
-            <div onClick={() => this.handleShow(item)}>{item[0].code}</div>
+          <Button className="courseButton">
             <div
               type="button"
-              class="close"
+              className="close plus"
               onClick={() => this.addCourse(item)}
             >
-              <span aria-hidden="true">&oplus;</span>
+              <span aria-hidden="true">&times;</span>
+            </div>
+            <div className="title" onClick={() => this.handleShow(item, true)}>
+              {item[0].code}
             </div>
           </Button>
         </li>
@@ -237,21 +301,24 @@ export default class StandardCalendar extends React.Component {
         this.setState({ courseArray: tmpArr });
       }
     }
+    this.setState({ show: false });
   }
   showSelectedCourses() {
     const { courseArray } = this.state;
     return _.map(courseArray, item => {
       return (
         <li>
-          <Button>
-            {item[0].code}
+          <Button className="courseButton">
             <div
               type="button"
-              class="close"
+              className="close"
               aria-label="Close"
               onClick={() => this.removeCourse(item)}
             >
               <span aria-hidden="true">&times;</span>
+            </div>
+            <div className="title" onClick={() => this.handleShow(item, false)}>
+              {item[0].code}
             </div>
           </Button>
         </li>
@@ -259,7 +326,12 @@ export default class StandardCalendar extends React.Component {
     });
   }
   render() {
-    const { showSchedule, courseArray } = this.state;
+    const {
+      showSchedule,
+      courseArray,
+      scheduleCombos,
+      scheduleIndex
+    } = this.state;
     return (
       <div>
         {!showSchedule && (
@@ -297,15 +369,16 @@ export default class StandardCalendar extends React.Component {
 
         {showSchedule && (
           <div>
-            <a role="button" onClick={() => this.goBack()}>
-              Back
-            </a>
-            <a role="button" onClick={() => this.nextSchedule()}>
-              Next Schedule
-            </a>
-
+            <Button onClick={() => this.goBack()}>Back</Button>
+            <Button onClick={() => this.nextSchedule()}>Next Schedule</Button>
+            {scheduleCombos &&
+              scheduleCombos.length > 0 && (
+                <div>
+                  {scheduleIndex}/{scheduleCombos.length}
+                </div>
+              )}
             <WeekCalendar
-              startTime={moment({ h: 9, m: 0 })}
+              startTime={moment({ h: 8, m: 30 })}
               endTime={moment({ h: 17, m: 45 })}
               numberOfDays={5}
               selectedIntervals={this.state.selectedIntervals}

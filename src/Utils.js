@@ -93,7 +93,6 @@ export function getIntervals(start, end) {
   return result;
 }
 export function dayOfTheWeek(day) {
-  console.log("kdawg2", day);
   switch (day) {
     case 0:
       return "Monday";
@@ -105,5 +104,19 @@ export function dayOfTheWeek(day) {
       return "Thursday";
     case 4:
       return "Friday";
+  }
+}
+export function dayOfTheWeekShort(day) {
+  switch (day) {
+    case 0:
+      return "Mon";
+    case 1:
+      return "Tues";
+    case 2:
+      return "Wed";
+    case 3:
+      return "Thurs";
+    case 4:
+      return "Fri";
   }
 }

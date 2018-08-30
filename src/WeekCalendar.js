@@ -342,7 +342,7 @@ class WeekCalendar extends React.Component {
           }
           const top = startY * cellHeight;
           const width =
-            (columnDimensions[dayIndex].width - 15) / groupIntersection;
+            (columnDimensions[dayIndex].width - 15) / groupIntersection + 14;
           const left =
             columnDimensions[dayIndex].left +
             (width + 7) * beforeIntersectionNumber;
@@ -352,6 +352,10 @@ class WeekCalendar extends React.Component {
             left,
             width,
             height
+          };
+          console.log("hello", interval);
+          const courseStyle = {
+            backgrounColor: "green"
           };
           const eventComponent = (
             <div

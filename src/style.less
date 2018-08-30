@@ -1,5 +1,5 @@
 @calendar-color: #6b6b6b;
-@calendar-max-height: 600px;
+@calendar-max-height: 800px;
 @border-color: #b7b7b7;
 @header-color: @calendar-color;
 @header-bg-color: #f7f7f7;
@@ -113,7 +113,8 @@
 
 .weekCalendar__overlay {
   position: absolute;
-  padding: 4px;
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 .weekCalendar__overlay_status_selection {
@@ -167,6 +168,9 @@
   height: 100%;
   color: @event-color;
   background-color: @event-bg-color;
+  border-radius: 5px;
+  border-width: 1px;
+  border-style: solid;
 }
 
 .calendarModal {
