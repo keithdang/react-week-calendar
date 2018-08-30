@@ -48,6 +48,7 @@ export class CalendarHeader extends React.Component {
     for (let i = 0; i < numberOfDays; i += 1) {
       const date = moment(firstDay).add(i, "d");
       const { width } = columnDimensions[i];
+      console.log(width);
       totalWidth += width;
       const newCell = (
         <div key={i} className="weekCalendar__headerColumn" style={{ width }}>
