@@ -3,6 +3,7 @@ import moment from "moment";
 import WeekCalendar from "react-week-calendar";
 import { schedule } from "./schedule";
 import course from "./courses";
+import { dayOfTheWeek } from "../../../src/Utils";
 import { Modal, Table, Grid, Row, Button, Col } from "react-bootstrap";
 export default class StandardCalendar extends React.Component {
   constructor(props) {
@@ -12,6 +13,8 @@ export default class StandardCalendar extends React.Component {
     this.nextSchedule = this.nextSchedule.bind(this);
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.overlapShow = this.overlapShow.bind(this);
+    this.overlapClose = this.overlapClose.bind(this);
     this.state = {
       lastUid: 4,
       selectedIntervals: [],
@@ -20,7 +23,8 @@ export default class StandardCalendar extends React.Component {
       courseArray: [],
       scheduleCombos: [],
       show: false,
-      courseDisplay: null
+      courseDisplay: null,
+      showOverlap: false
     };
   }
   handleClose() {
@@ -29,6 +33,13 @@ export default class StandardCalendar extends React.Component {
 
   handleShow(course) {
     this.setState({ show: true, courseDisplay: course });
+  }
+  overlapClose() {
+    this.setState({ showOverlap: false });
+  }
+
+  overlapShow(course) {
+    this.setState({ showOverlap: true });
   }
   setCourses(arr, course, index) {
     for (var i = 0; i < course.days.length; i++) {
@@ -49,9 +60,19 @@ export default class StandardCalendar extends React.Component {
     }
   }
   setCourseList(tmpArr, courseList, index) {
-    for (var i = 0; i < courseList.length; i++) {
-      this.setCourses(tmpArr, courseList[i], index);
+    if (courseList) {
+      this.setState({ showOverlap: false });
+      for (var i = 0; i < courseList.length; i++) {
+        this.setCourses(tmpArr, courseList[i], index);
+      }
+    } else {
+      this.setState({ showOverlap: true });
     }
+  }
+  displayDays(daysArray) {
+    return _.map(daysArray, day => {
+      return <p>{dayOfTheWeek(day - 1)}</p>;
+    });
   }
   renderCourseModal() {
     const { courseDisplay, show } = this.state;
@@ -65,8 +86,7 @@ export default class StandardCalendar extends React.Component {
             <Modal.Body>
               <h4>{courseDisplay[0].code}</h4>
               <hr />
-              <div>Hello</div>
-              <h5>Hello</h5>
+              <div>{this.displayDays(courseDisplay[0].days)}</div>
             </Modal.Body>
             <Modal.Footer>
               <Button onClick={() => this.addCourse(courseDisplay)}>
@@ -76,6 +96,20 @@ export default class StandardCalendar extends React.Component {
             </Modal.Footer>
           </Modal>
         )}
+      </div>
+    );
+  }
+  renderOverlapModal() {
+    return (
+      <div>
+        <Modal show={this.state.showOverlap} onHide={this.overlapClose}>
+          <Modal.Header>
+            <Modal.Title>No combinations that work</Modal.Title>
+          </Modal.Header>
+          <Modal.Footer>
+            <Button onClick={this.overlapClose}>Close</Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     );
   }
@@ -137,13 +171,13 @@ export default class StandardCalendar extends React.Component {
     } = this.state;
     if (courseArray && courseArray.length > 0) {
       var tmpSchedule = schedule(courseArray);
-      var combinationList = tmpSchedule[scheduleIndex];
+      var combinationList = tmpSchedule[0];
       var tmpArr = [];
       var index = 0;
       this.setCourseList(tmpArr, combinationList, index);
       this.setState({
         selectedIntervals: tmpArr,
-        scheduleIndex: scheduleIndex + 1,
+        scheduleIndex: 1,
         scheduleCombos: tmpSchedule
       });
     }
@@ -172,13 +206,20 @@ export default class StandardCalendar extends React.Component {
     this.setState({ show: false });
   }
   showCoursesAvailable() {
-    console.log("show all:", course.allCourses);
+    //console.log("show all:", course.allCourses);
     return _.map(course.allCourses, item => {
       return (
         <li>
-          <a role="button" onClick={() => this.handleShow(item)}>
-            {item[0].code}
-          </a>
+          <Button style={{ display: "flex" }}>
+            <div onClick={() => this.handleShow(item)}>{item[0].code}</div>
+            <div
+              type="button"
+              class="close"
+              onClick={() => this.addCourse(item)}
+            >
+              <span aria-hidden="true">&oplus;</span>
+            </div>
+          </Button>
         </li>
       );
     });
@@ -236,7 +277,9 @@ export default class StandardCalendar extends React.Component {
               <Col xs={12} md={6}>
                 <div>
                   <h5>Courses Available</h5>
-                  <ul>{this.showCoursesAvailable()}</ul>
+                  <ul style={{ listStyleType: "none", padding: "0" }}>
+                    {this.showCoursesAvailable()}
+                  </ul>
                   <div>{this.renderCourseModal()}</div>
                 </div>
               </Col>
@@ -270,6 +313,7 @@ export default class StandardCalendar extends React.Component {
               onIntervalUpdate={this.handleEventUpdate}
               onIntervalRemove={this.handleEventRemove}
             />
+            {this.renderOverlapModal()}
           </div>
         )}
       </div>

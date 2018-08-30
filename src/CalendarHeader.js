@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
-
+import { dayOfTheWeek } from "./Utils";
 const propTypes = {
   firstDay: PropTypes.object.isRequired,
   numberOfDays: PropTypes.number.isRequired,
@@ -19,20 +19,20 @@ export class CalendarHeader extends React.Component {
       nextProps.columnDimensions !== this.props.columnDimensions
     );
   }
-  dayOfTheWeek(day) {
-    switch (day) {
-      case 0:
-        return "Monday";
-      case 1:
-        return "Tuesday";
-      case 2:
-        return "Wednesday";
-      case 3:
-        return "Thursday";
-      case 4:
-        return "Friday";
-    }
-  }
+  // dayOfTheWeek(day) {
+  //   switch (day) {
+  //     case 0:
+  //       return "Monday";
+  //     case 1:
+  //       return "Tuesday";
+  //     case 2:
+  //       return "Wednesday";
+  //     case 3:
+  //       return "Thursday";
+  //     case 4:
+  //       return "Friday";
+  //   }
+  // }
   render() {
     const { firstDay, numberOfDays, dayFormat, columnDimensions } = this.props;
 
@@ -52,7 +52,7 @@ export class CalendarHeader extends React.Component {
       totalWidth += width;
       const newCell = (
         <div key={i} className="weekCalendar__headerColumn" style={{ width }}>
-          <p>{this.dayOfTheWeek(i)}</p>
+          <p>{dayOfTheWeek(i)}</p>
         </div>
       );
       weekdayColumns.push(newCell);
