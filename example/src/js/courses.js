@@ -1,6 +1,7 @@
 const math141 = [
   {
-    name: "Math 141",
+    name: "Calculus",
+    code: "Math 141",
     days: [1, 3, 5],
     startHour: 8,
     startMinute: 35,
@@ -10,7 +11,8 @@ const math141 = [
 ];
 const math133 = [
   {
-    name: "Math 133",
+    name: "Linear Algebra",
+    code: "Math 133",
     days: [1, 3, 5],
     startHour: 9,
     startMinute: 35,
@@ -18,7 +20,8 @@ const math133 = [
     endMinute: 25
   },
   {
-    name: "Math 133",
+    name: "Linear Algebra",
+    code: "Math 133",
     days: [2, 4],
     startHour: 14,
     startMinute: 5,
@@ -28,7 +31,8 @@ const math133 = [
 ];
 const chem120 = [
   {
-    name: "Chem 120",
+    name: "Introduction to Chemistry",
+    code: "Chem 120",
     days: [1, 3, 5],
     startHour: 10,
     startMinute: 35,
@@ -38,7 +42,8 @@ const chem120 = [
 ];
 const phys130 = [
   {
-    name: "Phys 130",
+    name: "Introduction to Physics",
+    code: "Phys 130",
     days: [2, 4],
     startHour: 12,
     startMinute: 35,
@@ -46,7 +51,8 @@ const phys130 = [
     endMinute: 55
   },
   {
-    name: "Phys 130",
+    name: "Introduction to Physics",
+    code: "Phys 130",
     days: [1, 3, 5],
     startHour: 12,
     startMinute: 35,
@@ -56,7 +62,8 @@ const phys130 = [
 ];
 const ecse200 = [
   {
-    name: "Ecse 200",
+    name: "Circuits I",
+    code: "Ecse 200",
     days: [2, 4],
     startHour: 9,
     startMinute: 35,
@@ -64,7 +71,18 @@ const ecse200 = [
     endMinute: 55
   }
 ];
-const allCourses = [math133, math141, chem120, phys130, ecse200];
+const comp202 = [
+  {
+    name: "Introduction to Programming",
+    code: "Comp 202",
+    days: [2, 4],
+    startHour: 9,
+    startMinute: 35,
+    endHour: 10,
+    endMinute: 55
+  }
+];
+const allCourses = [math133, math141, chem120, phys130, ecse200, comp202];
 module.exports = {
   math141: math141,
   math133: math133,

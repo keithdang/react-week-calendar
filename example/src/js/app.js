@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import "../../../src/style.less";
 import StandardCalendar from "./StandardCalendar";
 import CustomCalendar from "./CustomCalendar";
-
+import "./app.less";
 class App extends React.Component {
   constructor(props) {
     super(props);
