@@ -353,7 +353,6 @@ class WeekCalendar extends React.Component {
             width,
             height
           };
-          console.log("hello", interval);
           const courseStyle = {
             backgrounColor: "green"
           };

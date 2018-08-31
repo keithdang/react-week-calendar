@@ -5,12 +5,11 @@ import { schedule } from "./schedule";
 import course from "./courses";
 import { dayOfTheWeekShort } from "../../../src/Utils";
 import { Modal, Table, Grid, Row, Button, Col } from "react-bootstrap";
-
+import { setCourses, displayTime, displayCourseOptions } from "./courseUtils";
 export default class StandardCalendar extends React.Component {
   constructor(props) {
     super(props);
     this.setCourseList = this.setCourseList.bind(this);
-    this.setCourses = this.setCourses.bind(this);
     this.nextSchedule = this.nextSchedule.bind(this);
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -43,93 +42,19 @@ export default class StandardCalendar extends React.Component {
   overlapShow(course) {
     this.setState({ showOverlap: true });
   }
-  setCourses(arr, course, index) {
-    for (var i = 0; i < course.days.length; i++) {
-      let courseInfo = {
-        uid: index,
-        start: moment({
-          h: course.startHour,
-          m: course.startMinute
-        }).add(course.days[i] - 1, "d"),
-        end: moment({
-          h: course.endHour,
-          m: course.endMinute
-        }).add(course.days[i] - 1, "d"),
-        value: course.code,
-        color: course.color
-      };
-      arr.push(courseInfo);
-      index++;
-    }
-  }
   setCourseList(tmpArr, courseList, index) {
     if (courseList) {
       this.setState({ showOverlap: false });
       for (var i = 0; i < courseList.length; i++) {
-        this.setCourses(tmpArr, courseList[i], index);
+        setCourses(tmpArr, courseList[i], index);
       }
     } else {
       this.setState({ showOverlap: true });
     }
   }
-  displayDays(daysArray) {
-    return _.map(daysArray, day => {
-      return (
-        <p style={{ paddingRight: "5px" }}>{dayOfTheWeekShort(day - 1)}</p>
-      );
-    });
-  }
-  convertTo12(hour, minute) {
-    var notation = "am";
-    var displayHour = hour;
-    var displayMinute = minute;
-    if (hour > 12) {
-      displayHour = hour - 12;
-      notation = "pm";
-    } else if (hour == 0) {
-      displayHour = 12;
-    }
-    if (minute < 10) {
-      displayMinute = "0" + minute;
-    }
-    return `${displayHour}:${displayMinute} ${notation}`;
-  }
-  displayTime(course) {
-    return (
-      <p>
-        {this.convertTo12(course.startHour, course.startMinute)}-
-        {this.convertTo12(course.endHour, course.endMinute)}
-      </p>
-    );
-  }
-  displayCourseOptions(course) {
-    var numCells = 3;
-    if (course.length === 3) {
-      numCells = 2;
-    }
-    var courseOptions = _.map(course, option => {
-      return (
-        <Col xs={12} md={numCells}>
-          <div style={{ display: "flex" }}>{this.displayDays(option.days)}</div>
-          <div>{this.displayTime(option)}</div>
-          <div>{option.prof}</div>
-        </Col>
-      );
-    });
-    return (
-      <div>
-        <Grid>
-          <Row className="show-grid">
-            <h5>Available Times</h5>
-            {courseOptions}
-          </Row>
-        </Grid>
-      </div>
-    );
-  }
+
   renderCourseModal() {
     const { courseDisplay, show, addCourse } = this.state;
-    console.log(courseDisplay);
     return (
       <div>
         {courseDisplay && (
@@ -140,7 +65,7 @@ export default class StandardCalendar extends React.Component {
             <Modal.Body>
               <h4>{courseDisplay[0].code}</h4>
               <hr />
-              <div>{this.displayCourseOptions(courseDisplay)}</div>
+              <div>{displayCourseOptions(courseDisplay)}</div>
             </Modal.Body>
             <Modal.Footer>
               {addCourse ? (
@@ -160,9 +85,10 @@ export default class StandardCalendar extends React.Component {
     );
   }
   renderOverlapModal() {
+    const { showOverlap } = this.state;
     return (
       <div>
-        <Modal show={this.state.showOverlap} onHide={this.overlapClose}>
+        <Modal show={showOverlap} onHide={this.overlapClose}>
           <Modal.Header>
             <Modal.Title>No combinations that work</Modal.Title>
           </Modal.Header>
@@ -220,7 +146,6 @@ export default class StandardCalendar extends React.Component {
       newIndex = 0;
     }
     this.setCourseList(tmpArr, combinationList, index);
-    console.log("tmpArr", tmpArr);
     this.setState({ selectedIntervals: tmpArr, scheduleIndex: newIndex });
   }
   selectCourses() {
@@ -267,8 +192,6 @@ export default class StandardCalendar extends React.Component {
     this.setState({ show: false });
   }
   showCoursesAvailable() {
-    //console.log("show all:", course.allCourses);
-    //courses.allCourses.sort(compare);
     return _.map(course.allCourses, item => {
       return (
         <li>
@@ -295,7 +218,6 @@ export default class StandardCalendar extends React.Component {
     const { courseArray } = this.state;
     for (var i = 0; i < courseArray.length; i++) {
       if (courseArray[i] === course) {
-        console.log("match");
         let tmpArr = courseArray;
         tmpArr.splice(i, 1);
         this.setState({ courseArray: tmpArr });

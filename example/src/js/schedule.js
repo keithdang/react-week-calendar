@@ -96,14 +96,6 @@ function checkAllPossibilities(
   }
 }
 export function schedule(courseArray) {
-  //   var courseArray = [
-  //     courseList.math133,
-  //     courseList.math141,
-  //     courseList.chem120,
-  //     courseList.ecse200,
-  //     courseList.phys130
-  //   ];
-  console.log("schedule.js:", courseArray);
   var listOfCombinations = [];
   var currentArray = [];
   var maxNum = courseArray.length;
